@@ -16,7 +16,8 @@ public class ButtonManager : MonoBehaviour
     public GameObject settingUI;
     public GameObject settingImage;
     public GameObject target;
-    public CameraController camera;
+    
+    public StoryCardController storyCardController;
 
     private void Awake()
     {
@@ -65,6 +66,7 @@ public class ButtonManager : MonoBehaviour
         gameUI.SetActive(true);
         handbookUI.SetActive(true);
         settingUI.SetActive(true);
+        storyCardController.OpenCard();
     }
     //打开人员名单
     public void OpenList()
