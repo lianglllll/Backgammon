@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public enum GameStatus
 {
-    Start,MyLayTime,EnemyLayTime,MyAction, MyDraw, EnemyAction,EnemyDraw
+    Start,MyLayTime,EnemyLayTime,MyAction, MyDraw, EnemyAction,EnemyDraw,MyWin,EnemyWin
 }
 
 
@@ -15,7 +16,6 @@ public enum GameStatus
 /// </summary>
 public class BattleManager : Singelton<BattleManager>
 {
-
 
     public BoardManager boardManager;
 
@@ -34,6 +34,8 @@ public class BattleManager : Singelton<BattleManager>
     private int layRound = 0;//当前的放置回合
     private int layNumber;//当前棋子的放置次数
 
+    public int myChessCounter = 0;
+    public int enemyChessCounter = 0;
 
     public Selectable selectable;//管理鼠标点击接口
 
@@ -59,15 +61,17 @@ public class BattleManager : Singelton<BattleManager>
     //切换到enemy
     public UnityEvent enemyActionEvent = new UnityEvent();
 
-
-
     private bool isLay = true;//是否为放置棋子的回合
 
     public int allowchessBlocks = 8;
 
 
+    public Text BroadcastRelation;//用于显示关系触发的text
+
+
     private void Start()
     {
+        //Screen.SetResolution(1920, 1080, false);
         Play();
     }
 
@@ -85,6 +89,11 @@ public class BattleManager : Singelton<BattleManager>
 
         layRound = 0;
         layNumber = layNumberOrder[layRound];
+
+        myChessCounter = 0;
+        enemyChessCounter = 0;
+
+        BroadcastRelation.text = "";
 
         //状态需要切换
         status = GameStatus.MyLayTime;
@@ -126,7 +135,6 @@ public class BattleManager : Singelton<BattleManager>
         StatusChangeEvent?.Invoke();
     }
 
-
     /*
      放置切换
      */
@@ -156,7 +164,6 @@ public class BattleManager : Singelton<BattleManager>
         StatusChangeEvent?.Invoke();
     }
 
-
     /*
      * 触发回合结束按钮
      */
@@ -179,8 +186,10 @@ public class BattleManager : Singelton<BattleManager>
      */
     public void AddChess(int i, Chess chess)
     {
+        Indentity ind = chess.indentity;
         if (BolckInfos.ContainsKey(i))
         {
+            
             BolckInfos[i].Add(chess);
         }
         else
@@ -189,6 +198,8 @@ public class BattleManager : Singelton<BattleManager>
             chesss.Add(chess);
             BolckInfos[i] = chesss;
         }
+
+
     }
 
     /*
@@ -212,6 +223,59 @@ public class BattleManager : Singelton<BattleManager>
 
     }
 
+    /*
+       传入即将销毁棋子的身份，归属该身份的棋子数量--
+     */
+    public void ChessCountDecrease(Indentity ind)
+    {
+        if (ind == Indentity.My)
+        {
+            myChessCounter--;
+            if (myChessCounter <= 0)
+            {
+                status = GameStatus.EnemyWin;
+                GameOver();
+            }
+        }
+        else if (ind == Indentity.Enemy)
+        {
+            enemyChessCounter--;
+            if (enemyChessCounter <= 0)
+            {
+                status = GameStatus.MyWin;
+                GameOver();
+            }
+
+        }
+    }
+
+    /*
+     chessCOUNTER++
+     */
+    public void ChessCountIncrease()
+    {
+        
+        if (status == GameStatus.MyLayTime)
+        {
+            myChessCounter++;
+        }
+        else if (status == GameStatus.EnemyLayTime)
+        {
+            enemyChessCounter++;
+        }
+    }
+
+    /*
+     游戏结束
+     */
+    private void GameOver()
+    {
+        //得显示某某某胜利吧
+        StatusChangeEvent?.Invoke();
+
+        //todo
+
+    }
 
     /*
      *根据类型来查询当前棋格有无目标类型的实例；
@@ -285,7 +349,6 @@ public class BattleManager : Singelton<BattleManager>
 
     }
 
-
     /*
      判断是当前的卦是什么状态
      */
@@ -333,7 +396,6 @@ public class BattleManager : Singelton<BattleManager>
 
     }
 
-
     /*
      获取我方垒中的一个敌方棋子（乌头/半夏）,传过来的是敌方身份
      */
@@ -349,7 +411,6 @@ public class BattleManager : Singelton<BattleManager>
 
         return null;
     }
-
 
     /*
      放置阶段  判断当前的棋格有没有对方的棋子在上面
@@ -382,7 +443,6 @@ public class BattleManager : Singelton<BattleManager>
         return false;
     }
 
-
     /*
      投筛子
      */
@@ -408,7 +468,9 @@ public class BattleManager : Singelton<BattleManager>
     public void LayNumberDecrease()
     {
         layNumber--;
+        ChessCountIncrease();
     }
+
     /*
      获取本轮放置次数
      */
@@ -416,8 +478,6 @@ public class BattleManager : Singelton<BattleManager>
     {
         return layNumber;
     }
-
-
 
     /*
      移动棋子
@@ -438,10 +498,6 @@ public class BattleManager : Singelton<BattleManager>
             selectable.selectedObject = null;
         }
     }
-
-
-
-
 
     /*
     开启某个棋格的毒区，设置block脚本里的目标身份即可
@@ -465,6 +521,24 @@ public class BattleManager : Singelton<BattleManager>
     public GameObject IsOpenPoisonousCircle(int pos)
     {
         return boardManager.IsOpenPoisonousCircle(pos);
+    }
+
+
+
+    /*
+     展示触发的关系
+     */
+    public void ShowRelationship(string str)
+    {
+        //开个协程，因为需要保存1秒
+        StartCoroutine(Show(str));
+    }
+
+    IEnumerator Show(string str)
+    {
+        BroadcastRelation.text = str;
+        yield return new WaitForSeconds(2);
+        BroadcastRelation.text = "";
     }
 
 

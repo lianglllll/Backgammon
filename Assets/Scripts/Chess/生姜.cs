@@ -16,6 +16,7 @@ public class 生姜 : Chess
     */
     public void 相恶()
     {
+        BattleManager.Instance.ShowRelationship("相恶");
         extraNumber -= 1;
     }
 
@@ -34,6 +35,9 @@ public class 生姜 : Chess
         {
             return;
         }
+
+
+        BattleManager.Instance.ShowRelationship("相杀相畏");
 
         //触发解毒效果，就是关闭当前格子的毒杀效果
         nowBlock.GetComponent<Block>().ClosePoisonousCircle();

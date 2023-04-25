@@ -27,6 +27,7 @@ public class 黄苓 : Chess
      */
     public void 相使()
     {
+        BattleManager.Instance.ShowRelationship("相使");
         extraNumber += 2;
     }
 
@@ -35,6 +36,7 @@ public class 黄苓 : Chess
      */
     public void 相恶()
     {
+        BattleManager.Instance.ShowRelationship("相恶");
         extraNumber -= 1;
     }
 
@@ -47,6 +49,8 @@ public class 黄苓 : Chess
         //移动之前先判断当前位置上有无关系，如果有就触发特殊效果
         if (BattleManager.Instance.IsExistTargetChessTypeByID(nowPosition, ChessType.大黄))
         {
+            Chess ch = BattleManager.Instance.IsExistTargetChessTypeByID2(nowPosition, ChessType.大黄, indentity);
+            if (ch != null)
             相使();
         }
         if (BattleManager.Instance.IsExistTargetChessTypeByID(nowPosition, ChessType.生姜))

@@ -19,6 +19,7 @@ public class 陈皮 : Chess
      */
     public void 相须()
     {
+        BattleManager.Instance.ShowRelationship("相须");
         extraNumber = 1;
     }
 

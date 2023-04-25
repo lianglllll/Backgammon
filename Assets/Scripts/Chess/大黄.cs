@@ -17,6 +17,7 @@ public class 大黄 : Chess
     */
     public void 相使()
     {
+        BattleManager.Instance.ShowRelationship("相使");
         extraNumber = 2;
     }
 

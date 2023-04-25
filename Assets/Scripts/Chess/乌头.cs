@@ -31,7 +31,7 @@ public class 乌头 : Chess
         chess = BattleManager.Instance.IsExistTargetChessTypeByID2(nowPosition, ChessType.生姜, otherIdentity);
         if (chess != null) return false;
 
-
+        BattleManager.Instance.ShowRelationship("相反");
         //触发相反效果，随机对本棋格中一个敌方单位造成伤害
         Chess ch = BattleManager.Instance.RamGetAimChessInBlocks(nowPosition, otherIdentity);
         ch.Harm();

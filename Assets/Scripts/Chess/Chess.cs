@@ -80,6 +80,8 @@ public class Chess : MonoBehaviour
      */
     private void Die()
     {
+        //相应的计数器减少
+        BattleManager.Instance.ChessCountDecrease(indentity);
         //先将物体从棋格信息中删除
         BattleManager.Instance.RemoveChess(nowPosition,this);
         //将物体销毁
@@ -93,7 +95,7 @@ public class Chess : MonoBehaviour
     {
 
 
-        Debug.Log("你爹来罗");
+        //Debug.Log("你爹来罗");
         //移动之前先判断当前位置上有无关系，如果有就触发特殊效果
 
         //启动脚本，等他完成任务，move脚本是会自动关闭脚本
@@ -107,7 +109,7 @@ public class Chess : MonoBehaviour
      */
     public virtual void LastMove()
     {
-        Debug.Log("你爹走咯");
+        //Debug.Log("你爹走咯");
     }
 
 

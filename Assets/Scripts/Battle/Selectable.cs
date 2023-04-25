@@ -118,8 +118,6 @@ public class Selectable : MonoBehaviour
 
                 //不需要告诉battleManager，只需要让其无法放置棋子即可，到时候玩家自然会去按回合结束的按钮
                 BattleManager.Instance.LayNumberDecrease();//放置成功，本轮放置次数减一
-
-
             }
         }
     }
