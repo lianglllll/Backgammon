@@ -65,8 +65,11 @@ public class BattleManager : Singelton<BattleManager>
 
     public int allowchessBlocks = 8;
 
-
     public Text BroadcastRelation;//用于显示关系触发的text
+
+    //命门下标
+    public int MylifeGate = 2;
+    public int EnemylifeGate = 6;
 
 
     private void Start()
@@ -80,6 +83,9 @@ public class BattleManager : Singelton<BattleManager>
      */
     public void Play()
     {
+        MylifeGate = 2;
+        EnemylifeGate = 6;
+
         layNumberOrder.Add(2);
         layNumberOrder.Add(3);
         layNumberOrder.Add(3);
@@ -493,7 +499,7 @@ public class BattleManager : Singelton<BattleManager>
     {
         if (Input.GetKeyDown(KeyCode.Space) && selectable.selectedObject !=null)
         {
-            //StepNum = 3;//测试
+            StepNum = 1;//测试
             MoveChess();
             selectable.selectedObject = null;
         }
@@ -541,5 +547,15 @@ public class BattleManager : Singelton<BattleManager>
         BroadcastRelation.text = "";
     }
 
+
+    /// <summary>
+    /// 进入命门回调
+    /// </summary>
+    public void EntryLifeGateCallback()
+    {
+        status = status == GameStatus.MyAction ? GameStatus.MyWin : GameStatus.EnemyWin;
+        StatusChangeEvent?.Invoke();
+        //todo
+    }
 
 }

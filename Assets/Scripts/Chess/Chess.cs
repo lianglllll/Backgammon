@@ -60,8 +60,6 @@ public class Chess : MonoBehaviour
         nowPosition = (nowPosition + 1) % BattleManager.Instance.allowchessBlocks;
     }
 
-
-
     /*
      造成伤害
      */
@@ -73,7 +71,6 @@ public class Chess : MonoBehaviour
             Die();
         }
     }
-
 
     /*
      * 死亡
@@ -110,6 +107,30 @@ public class Chess : MonoBehaviour
     public virtual void LastMove()
     {
         //Debug.Log("你爹走咯");
+    }
+
+    /// <summary>
+    /// 判断当前格子是否为对方的命门
+    /// </summary>
+    /// <returns></returns>
+    public bool IsArriveLifeGate() {
+
+        int aimIndex = indentity == Indentity.My ? BattleManager.Instance.EnemylifeGate : BattleManager.Instance.MylifeGate;
+        if (nowPosition == aimIndex) return true;
+        return false;
+    }
+
+    /// <summary>
+    /// 当棋子在敌方命门中且投掷出1
+    /// </summary>
+    public  void EntryVictoryPoint() {
+
+        //移动到目标点，瞬移
+        _move._Move2();
+        //通知battlemanager结束游戏
+        BattleManager.Instance.EntryLifeGateCallback();
+
+
     }
 
 

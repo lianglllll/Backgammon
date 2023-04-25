@@ -50,9 +50,16 @@ public class 乌头 : Chess
     调用调用移动的脚本
     */
     public override void PrepareMove()
-    {        
+    {
+
         //在当前棋格信息中移除自己
         BattleManager.Instance.RemoveChess(nowPosition, this);
+
+        if(IsArriveLifeGate() && (BattleManager.Instance.StepNum + extraNumber) == 1)
+        {
+            EntryVictoryPoint();
+            return;
+        }
 
         //启动脚本，等他完成任务，move脚本是会自动关闭脚本
         _move._Move(BattleManager.Instance.StepNum + extraNumber);

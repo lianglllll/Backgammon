@@ -36,6 +36,12 @@ public class 生姜 : Chess
             return;
         }
 
+        if (IsArriveLifeGate() && (BattleManager.Instance.StepNum + extraNumber) == 1)
+        {
+            EntryVictoryPoint();
+            return;
+        }
+
 
         BattleManager.Instance.ShowRelationship("相杀相畏");
 

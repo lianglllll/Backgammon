@@ -33,6 +33,13 @@ public class 半夏 : Chess
         {
             相须();
         }
+
+        if (IsArriveLifeGate() && (BattleManager.Instance.StepNum + extraNumber) == 1)
+        {
+            EntryVictoryPoint();
+            return;
+        }
+
         //在当前棋格信息中移除自己
         BattleManager.Instance.RemoveChess(nowPosition, this);
 

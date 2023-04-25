@@ -34,6 +34,13 @@ public class 陈皮 : Chess
         {
             相须();
         }
+
+        if (IsArriveLifeGate() && (BattleManager.Instance.StepNum + extraNumber) == 1)
+        {
+            EntryVictoryPoint();
+            return;
+        }
+
         //在当前棋格信息中移除自己
         BattleManager.Instance.RemoveChess(nowPosition, this);
 

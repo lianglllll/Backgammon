@@ -16,6 +16,7 @@ public class Move : MonoBehaviour
     public float speed = 1;
 
     bool isMove = false;
+    bool isMove2 = false;//移动一步的
 
     //外界传入的，将要走的步数
     private int stepNum = 0;
@@ -34,7 +35,11 @@ public class Move : MonoBehaviour
         { 
             isMove = false;
             StartCoroutine(MoveTowords()); 
-        } 
+        } else if (isMove2)
+        {
+            isMove2 = false;
+            StartCoroutine(MoveTowords2());
+        }
     }
 
 
@@ -45,13 +50,20 @@ public class Move : MonoBehaviour
         isMove = true;
     }
 
+    //对外提供一个移动stepNum步的接口
+    public void _Move2()
+    {
+        isMove2 = true;
+    }
+
+
     /*
      协程开始移动对应的棋子
      */
     public IEnumerator MoveTowords()
     {
         Debug.Log("骰子数：" + stepNum); 
-        int targetIndex = (chess.NowPosition + stepNum) % boardManager.boardPositions.Count; //获取目标棋格的下标
+        int targetIndex = (chess.NowPosition + stepNum) % BattleManager.Instance.allowchessBlocks;; //获取目标棋格的下标
 
 
         Destroy(gameObject.GetComponent<Rigidbody>());//删除本棋子的刚体，防止和其他棋子碰撞
@@ -84,6 +96,33 @@ public class Move : MonoBehaviour
         gameObject.AddComponent<Rigidbody>();
         gameObject.GetComponent<Move>().enabled = false; //禁用移动脚本
         
+
+    }
+
+    /// <summary>
+    /// 移动一步
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator MoveTowords2()
+    {
+
+        int index = GetComponent<Chess>().indentity == Indentity.My ? 9 : 8;
+
+        targetPosition = BattleManager.Instance.boardManager.boardObjects[index].position;
+        /*gameObject.transform.position = targetPosition;
+        yield return null;*/
+        Destroy(gameObject.GetComponent<Rigidbody>());//删除本棋子的刚体，防止和其他棋子碰撞
+
+        //每一帧不断移动靠近，直到到达目标棋block位置
+        while (transform.position != targetPosition + deviation)
+        {
+            transform.position = Vector3.MoveTowards
+                (transform.position, targetPosition + deviation, speed * Time.deltaTime);
+            yield return null;
+        }
+        BattleManager.Instance.StepNum = -1;//次数不可以再选中任何棋子进行移动了。需要重新将stepnum置为>0的数字才可以正常选中
+        gameObject.AddComponent<Rigidbody>();
+        gameObject.GetComponent<Move>().enabled = false; //禁用移动脚本
 
     }
 
